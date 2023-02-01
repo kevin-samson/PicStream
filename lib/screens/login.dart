@@ -23,61 +23,64 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
-    var column = Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          flex: 1,
-          child: Container(),
-        ),
-        // SvgPicture.asset(
-        //   "assets/ic_instagram.svg",
-        //   color: primaryColor,
-        //   height: 64,
-        // ),
-        Text('PicStream', style: GoogleFonts.grandHotel(fontSize: 64)),
-        const SizedBox(height: 64),
-        NewTextInput(
-            textEditingController: _emailField,
-            hintText: "Enter your email",
-            textInputType: TextInputType.emailAddress),
-        const SizedBox(height: 24),
-        NewTextInput(
-            textEditingController: _passwordField,
-            hintText: "Enter your password",
-            textInputType: TextInputType.text,
-            obscureText: true),
-        const SizedBox(height: 24),
-        SizedBox(
-          width: double.infinity,
-          child: ElevatedButton(
-            style: ButtonStyle(
-              padding: MaterialStateProperty.all(
-                  const EdgeInsets.symmetric(vertical: 13)),
-            ),
-            onPressed: () {},
-            child: const Text("Sign In"),
+    var column = Form(
+      key: _formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Flexible(
+            flex: 1,
+            child: Container(),
           ),
-        ),
-        const SizedBox(height: 12),
-        Flexible(
-          flex: 1,
-          child: Container(),
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("Don't have an account?"),
-            TextButton(
-              onPressed: () {},
-              child: const Text("Sign Up"),
+          Text('PicStream', style: GoogleFonts.grandHotel(fontSize: 64)),
+          const SizedBox(height: 64),
+          NewTextInput(
+              textEditingController: _emailField,
+              hintText: "Enter your email",
+              textInputType: TextInputType.emailAddress),
+          const SizedBox(height: 24),
+          NewTextInput(
+              textEditingController: _passwordField,
+              hintText: "Enter your password",
+              textInputType: TextInputType.text,
+              obscureText: true),
+          const SizedBox(height: 24),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                padding: MaterialStateProperty.all(
+                    const EdgeInsets.symmetric(vertical: 13)),
+              ),
+              onPressed: () {
+                print("Sign Up button pressed");
+                if (_formKey.currentState!.validate()) {
+                  print("Validated");
+                }
+              },
+              child: const Text("Sign In"),
             ),
-            Padding(
-                padding: EdgeInsets.only(
-                    bottom: MediaQuery.of(context).viewInsets.bottom))
-          ],
-        ),
-      ],
+          ),
+          const SizedBox(height: 12),
+          Flexible(
+            flex: 1,
+            child: Container(),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text("Don't have an account?"),
+              TextButton(
+                onPressed: () {},
+                child: const Text("Sign Up"),
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).viewInsets.bottom))
+            ],
+          ),
+        ],
+      ),
     );
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),

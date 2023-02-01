@@ -25,6 +25,9 @@ class NewTextInput extends StatelessWidget {
         if (value == null || value.isEmpty) {
           return "Please enter some text";
         }
+        if (errorText != null) {
+          return errorText;
+        }
         return null;
       },
       controller: textEditingController,
