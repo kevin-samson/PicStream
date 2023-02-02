@@ -4,7 +4,6 @@ import 'package:instagram_clone/responsive/layout.dart';
 import 'package:instagram_clone/responsive/mobile_screen.dart';
 import 'package:instagram_clone/responsive/web_screen.dart';
 import 'package:instagram_clone/screens/login.dart';
-import 'package:instagram_clone/screens/sign_up.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';

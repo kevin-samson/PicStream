@@ -7,6 +7,10 @@ import 'package:instagram_clone/screens/login.dart';
 import 'package:instagram_clone/utils/auth_methods.dart';
 import 'package:instagram_clone/widgets/text_input.dart';
 
+import '../responsive/layout.dart';
+import '../responsive/mobile_screen.dart';
+import '../responsive/web_screen.dart';
+
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
 
@@ -107,32 +111,34 @@ class _SignUpState extends State<SignUp> {
                 String? res;
                 if (_formKey.currentState!.validate()) {
                   res = await AuthMethods().signUpUser(
-                      email: _emailField.text,
-                      password: _passwordField.text,
-                      username: _usernameField.text,
+                      email: _emailField.text.toString(),
+                      password: _passwordField.text.toString(),
+                      username: _usernameField.text.toString(),
                       image: _image);
-                }
-                setState(() {
-                  _isLoading = false;
-                });
-                if (res != "valid") {
-                  if (!mounted) return;
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(res!),
-                    ),
-                  );
-                } else {
-                  if (!mounted) return;
-                  Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => const Login()));
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  if (res != "valid") {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(res),
+                      ),
+                    );
+                  } else {
+                    if (!mounted) return;
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) => const Layout(
+                            mobileScreen: MobileScreen(),
+                            webScreen: WebScreen())));
+                  }
                 }
               },
               child: _isLoading
                   ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                  : const Text("Sign Up"),
+                  : const Text("Sign In"),
             ),
           ),
           const SizedBox(height: 12),
