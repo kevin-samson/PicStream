@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:instagram_clone/screens/login.dart';
 import 'package:instagram_clone/utils/auth_methods.dart';
 import 'package:instagram_clone/widgets/text_input.dart';
 
@@ -17,9 +18,9 @@ class _SignUpState extends State<SignUp> {
   final TextEditingController _emailField = TextEditingController();
   final TextEditingController _passwordField = TextEditingController();
   final TextEditingController _usernameField = TextEditingController();
-  final TextEditingController _confirmPasswordField = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   Uint8List? _image;
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -27,27 +28,6 @@ class _SignUpState extends State<SignUp> {
     _emailField.dispose();
     _passwordField.dispose();
     _usernameField.dispose();
-    _confirmPasswordField.dispose();
-  }
-
-  // function to validate email
-  String? _validateEmail(String? value) {
-    if (value!.isEmpty) {
-      return "Email cannot be empty";
-    } else if (!value.contains("@")) {
-      return "Please enter a valid email";
-    }
-    return null;
-  }
-
-  // function to check if both passwords match
-  String? _validatePassword(String? value) {
-    if (value!.isEmpty) {
-      return "Password cannot be empty";
-    } else if (value != _confirmPasswordField.text) {
-      return "Passwords do not match";
-    }
-    return null;
   }
 
   //function to pick an image from gallery
@@ -73,11 +53,6 @@ class _SignUpState extends State<SignUp> {
             flex: 1,
             child: Container(),
           ),
-          // SvgPicture.asset(
-          //   "assets/ic_instagram.svg",
-          //   color: primaryColor,
-          //   height: 64,
-          // ),
           Text('PicsStream', style: GoogleFonts.grandHotel(fontSize: 64)),
           const SizedBox(height: 10),
           Stack(
@@ -108,7 +83,6 @@ class _SignUpState extends State<SignUp> {
               textInputType: TextInputType.text),
           const SizedBox(height: 24),
           NewTextInput(
-              errorText: _validateEmail(_emailField.text),
               textEditingController: _emailField,
               hintText: "Enter your email",
               textInputType: TextInputType.emailAddress),
@@ -119,13 +93,6 @@ class _SignUpState extends State<SignUp> {
               textInputType: TextInputType.text,
               obscureText: true),
           const SizedBox(height: 24),
-          NewTextInput(
-              errorText: _validatePassword(_passwordField.text),
-              textEditingController: _confirmPasswordField,
-              hintText: "Confirm your password",
-              textInputType: TextInputType.text,
-              obscureText: true),
-          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -133,16 +100,39 @@ class _SignUpState extends State<SignUp> {
                 padding: MaterialStateProperty.all(
                     const EdgeInsets.symmetric(vertical: 13)),
               ),
-              onPressed: () {
+              onPressed: () async {
+                setState(() {
+                  _isLoading = true;
+                });
+                String? res;
                 if (_formKey.currentState!.validate()) {
-                  AuthMethods().signUpUser(
+                  res = await AuthMethods().signUpUser(
                       email: _emailField.text,
                       password: _passwordField.text,
                       username: _usernameField.text,
-                      image: _image!);
+                      image: _image);
+                }
+                setState(() {
+                  _isLoading = false;
+                });
+                if (res != "valid") {
+                  if (!mounted) return;
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(res!),
+                    ),
+                  );
+                } else {
+                  if (!mounted) return;
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const Login()));
                 }
               },
-              child: const Text("Sign Up"),
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : const Text("Sign Up"),
             ),
           ),
           const SizedBox(height: 12),
@@ -155,7 +145,10 @@ class _SignUpState extends State<SignUp> {
             children: [
               const Text("Already have an account?"),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const Login()));
+                },
                 child: const Text("Sign In"),
               ),
             ],
@@ -170,7 +163,7 @@ class _SignUpState extends State<SignUp> {
           body: SingleChildScrollView(
             child: SizedBox(
                 width: double.infinity,
-                height: MediaQuery.of(context).size.height + 24,
+                height: MediaQuery.of(context).size.height - 24,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24),
                   child: column,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:instagram_clone/screens/sign_up.dart';
+import 'package:instagram_clone/utils/auth_methods.dart';
 import 'package:instagram_clone/widgets/text_input.dart';
 
 class Login extends StatefulWidget {
@@ -13,6 +15,7 @@ class _LoginState extends State<Login> {
   final TextEditingController _emailField = TextEditingController();
   final TextEditingController _passwordField = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -52,13 +55,32 @@ class _LoginState extends State<Login> {
                 padding: MaterialStateProperty.all(
                     const EdgeInsets.symmetric(vertical: 13)),
               ),
-              onPressed: () {
-                print("Sign Up button pressed");
+              onPressed: () async {
+                FocusScope.of(context).unfocus();
                 if (_formKey.currentState!.validate()) {
-                  print("Validated");
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  String res = await AuthMethods().loginUser(
+                      email: _emailField.text, password: _passwordField.text);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  if (res != "valid") {
+                    if (!mounted) return;
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(res),
+                      ),
+                    );
+                  }
                 }
               },
-              child: const Text("Sign In"),
+              child: _isLoading
+                  ? const CircularProgressIndicator(
+                      color: Colors.white,
+                    )
+                  : const Text("Sign Up"),
             ),
           ),
           const SizedBox(height: 12),
@@ -71,7 +93,10 @@ class _LoginState extends State<Login> {
             children: [
               const Text("Don't have an account?"),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(builder: (context) => const SignUp()));
+                },
                 child: const Text("Sign Up"),
               ),
               Padding(
