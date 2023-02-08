@@ -110,8 +110,14 @@ class _AddPostPageState extends State<AddPostPage> {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Add Post'),
-          automaticallyImplyLeading: false,
           backgroundColor: mobileBackgroundColor,
+          leading: IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  _image = null;
+                });
+              }),
           actions: [
             TextButton(
                 onPressed: _image == null
