@@ -80,7 +80,7 @@ class _LoginState extends State<Login> {
                   ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                  : const Text("Sign Up"),
+                  : const Text("Sign In"),
             ),
           ),
           const SizedBox(height: 12),

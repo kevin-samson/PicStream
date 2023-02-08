@@ -115,6 +115,7 @@ class _SignUpState extends State<SignUp> {
                       password: _passwordField.text.toString(),
                       username: _usernameField.text.toString(),
                       image: _image);
+
                   setState(() {
                     _isLoading = false;
                   });
@@ -126,11 +127,9 @@ class _SignUpState extends State<SignUp> {
                       ),
                     );
                   } else {
-                    if (!mounted) return;
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => const Layout(
-                            mobileScreen: MobileScreen(),
-                            webScreen: WebScreen())));
+                    await AuthMethods().loginUser(
+                        email: _emailField.text.toString(),
+                        password: _passwordField.text.toString());
                   }
                 }
               },
@@ -138,7 +137,7 @@ class _SignUpState extends State<SignUp> {
                   ? const CircularProgressIndicator(
                       color: Colors.white,
                     )
-                  : const Text("Sign In"),
+                  : const Text("Sign Up"),
             ),
           ),
           const SizedBox(height: 12),
@@ -152,7 +151,7 @@ class _SignUpState extends State<SignUp> {
               const Text("Already have an account?"),
               TextButton(
                 onPressed: () {
-                  Navigator.of(context).pushReplacement(
+                  Navigator.of(context).push(
                       MaterialPageRoute(builder: (context) => const Login()));
                 },
                 child: const Text("Sign In"),

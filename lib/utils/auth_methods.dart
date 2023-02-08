@@ -1,11 +1,31 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/services.dart';
+import 'package:instagram_clone/models/user.dart' as model;
 import 'package:instagram_clone/utils/storage_methods.dart';
 
 class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<model.User> getCurrentUser() async {
+    User currentUser = _auth.currentUser!;
+    DocumentSnapshot documentSnapshot =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    if (documentSnapshot.data() != null) {
+      return model.User.fromJson(
+          documentSnapshot.data() as Map<String, dynamic>, currentUser.uid);
+    } else {
+      return model.User(
+        username: '',
+        email: '',
+        bio: '',
+        profilePic: '',
+        followers: [],
+        following: [],
+      );
+    }
+  }
 
   Future<String> signUpUser({
     required String email,
@@ -21,19 +41,20 @@ class AuthMethods {
         email: email,
         password: password,
       );
-      print(userCredential.user!.uid);
 
       String photourl = await StorageMethods().uploadProfilePic(
           image: image ?? list, uid: userCredential.user!.uid);
 
-      _firestore.collection('users').doc(userCredential.user!.uid).set({
-        'username': username,
-        'email': email,
-        'bio': '',
-        'followers': [],
-        'following': [],
-        'profilePic': photourl,
-      });
+      _firestore.collection('users').doc(userCredential.user!.uid).set(
+            model.User(
+              username: username,
+              email: email,
+              bio: '',
+              profilePic: photourl,
+              followers: [],
+              following: [],
+            ).toJson(),
+          );
 
       return "valid";
     } on FirebaseAuthException catch (e) {
@@ -48,7 +69,6 @@ class AuthMethods {
       }
       return "An undefined Error happened.";
     } catch (e) {
-      print(e.hashCode);
       return "An undefined Error happened.";
     }
   }
