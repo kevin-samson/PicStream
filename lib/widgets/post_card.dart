@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
 import 'package:intl/intl.dart';
+import 'package:like_button/like_button.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
@@ -69,9 +71,22 @@ class _PostCardState extends State<PostCard> {
     final imageSection = SizedBox(
       height: MediaQuery.of(context).size.height * 0.35,
       width: double.infinity,
-      child: Image.network(
-        widget.post['imageUrl'],
-        fit: BoxFit.cover,
+      child: CachedNetworkImage(
+        imageUrl: widget.post['imageUrl'],
+        imageBuilder: (context, imageProvider) => Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: imageProvider,
+              fit: BoxFit.cover,
+            ),
+          ),
+        ),
+        placeholder: (context, url) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+        errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
     );
 
@@ -85,20 +100,19 @@ class _PostCardState extends State<PostCard> {
               SizedBox(
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(
-                        Icons.favorite,
-                        color: Colors.red,
-                      ),
+                    LikeButton(
+                      size: 29,
+                      likeCount: 0,
+                      countBuilder: (int? count, bool isLiked, String text) {
+                        return Text(
+                          '$text likes',
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleMedium!
+                              .copyWith(fontWeight: FontWeight.w800),
+                        );
+                      },
                     ),
-                    Text(
-                      '${widget.post['likes'].length} likes',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium!
-                          .copyWith(fontWeight: FontWeight.w800),
-                    )
                   ],
                 ),
               ),

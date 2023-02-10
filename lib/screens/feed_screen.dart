@@ -21,7 +21,10 @@ class _FeedPageState extends State<FeedPage> {
           backgroundColor: mobileBackgroundColor,
         ),
         body: StreamBuilder(
-          stream: FirebaseFirestore.instance.collection('posts').snapshots(),
+          stream: FirebaseFirestore.instance
+              .collection('posts')
+              .orderBy('date', descending: true)
+              .snapshots(),
           builder: (context, AsyncSnapshot snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

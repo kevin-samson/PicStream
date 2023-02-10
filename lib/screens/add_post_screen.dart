@@ -62,6 +62,7 @@ class _AddPostPageState extends State<AddPostPage> {
                   Navigator.of(context).pop();
                   final ImagePicker imagePicker = ImagePicker();
                   final XFile? image = await imagePicker.pickImage(
+                    maxHeight: 675,
                     source: ImageSource.camera,
                   );
                   Uint8List img = await image!.readAsBytes();
@@ -77,6 +78,7 @@ class _AddPostPageState extends State<AddPostPage> {
                   Navigator.of(context).pop();
                   final ImagePicker imagePicker = ImagePicker();
                   final XFile? image = await imagePicker.pickImage(
+                    maxHeight: 675,
                     source: ImageSource.gallery,
                   );
                   Uint8List img = await image!.readAsBytes();
