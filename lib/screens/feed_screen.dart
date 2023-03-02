@@ -33,6 +33,7 @@ class _FeedPageState extends State<FeedPage> {
               itemCount: snapshot.data.docs.length,
               itemBuilder: (context, index) => PostCard(
                 post: snapshot.data.docs[index].data(),
+                id: snapshot.data.docs[index].id,
               ),
             );
           },

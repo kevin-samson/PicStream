@@ -1,12 +1,14 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/utils/colors.dart';
+import 'package:instagram_clone/utils/storage_methods.dart';
 import 'package:intl/intl.dart';
 import 'package:like_button/like_button.dart';
 
 class PostCard extends StatefulWidget {
   final Map<String, dynamic> post;
-  const PostCard({super.key, required this.post});
+  final String id;
+  const PostCard({super.key, required this.post, required this.id});
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -22,7 +24,8 @@ class _PostCardState extends State<PostCard> {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundImage: NetworkImage(widget.post['profileImg']),
+            backgroundImage:
+                CachedNetworkImageProvider(widget.post['profileImg']),
           ),
           Expanded(
             child: Padding(
@@ -101,11 +104,25 @@ class _PostCardState extends State<PostCard> {
                 child: Row(
                   children: [
                     LikeButton(
-                      size: 29,
+                      onTap: (isLiked) async {
+                        await StorageMethods().likePost(widget.id,
+                            widget.post['uid'], widget.post['likes']);
+                        return !isLiked;
+                      },
                       likeCount: 0,
+                      likeBuilder: (isLiked) {
+                        return Icon(
+                          Icons.favorite,
+                          color:
+                              widget.post['likes'].contains(widget.post['uid'])
+                                  ? Colors.red
+                                  : Colors.white,
+                          size: 29,
+                        );
+                      },
                       countBuilder: (int? count, bool isLiked, String text) {
                         return Text(
-                          '$text likes',
+                          '${widget.post['likes'].length} likes',
                           style: Theme.of(context)
                               .textTheme
                               .titleMedium!
@@ -142,17 +159,17 @@ class _PostCardState extends State<PostCard> {
                   ]),
             ),
           ),
-          InkWell(
-            onTap: () {},
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-              child: const Text(
-                'View all 2323 comments',
-                style: TextStyle(color: secondaryColor, fontSize: 14),
-              ),
-            ),
-          ),
+          // InkWell(
+          //   onTap: () {},
+          //   child: Container(
+          //     width: double.infinity,
+          //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          //     child: const Text(
+          //       'View all 2323 comments',
+          //       style: TextStyle(color: secondaryColor, fontSize: 14),
+          //     ),
+          //   ),
+          // ),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
